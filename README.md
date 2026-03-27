@@ -111,3 +111,14 @@ is helpful to help your Group Project or any of your future software engineering
 Postman is very helpful. I keep the BambangShop collection with environment vars for base URLs so I can switch between local and deployed instances quickly, then use the Collection Runner to replay the subscribe/publish/unsubscribe flow after each change. I’m also starting to rely on the built-in test scripts to assert status codes and response bodies automatically, which feels handy for any future group project regression suite.
 
 #### Reflection Publisher-3
+1. 
+Observer Pattern has two variations: Push model (publisher pushes data to subscribers) and 
+Pull model (subscribers pull data from publisher). In this tutorial case, which variation of 
+Observer Pattern that we use?
+We use the push model because the publisher actively ships each notification payload right after a product event happens. Notification isn't sent when subscribers poll or log in first.
+2. What are the advantages and disadvantages of using the other variation of Observer Pattern 
+for this tutorial case? (example: if you answer Q1 with Push, then imagine if we used Pull) 
+If we change to use pull model, subscribers would be responsible for polling the publisher’s API to fetch the latest product changes. That approach reduces the load on the publisher (no need to fan out HTTP requests), but we lose the real-time feel and instead add latency and wasted network calls when nothing changes. It also puts more burden on subscriber implementations to schedule polling jobs and reconcile state conflicts.
+3. Explain what will happen to the program if we decide to not use multi-threading in the 
+notification process. 
+Without multi-threading each notification would be sent sequentially, the publisher would block on one HTTP call before moving to the next subscriber. That means a slow or unreachable subscriber stalls everyone behind it, the original product API call stays open longer, and users subscribed to fast endpoints still get their updates late. It's especially painful if we’re broadcasting flash promotions or low-stock alerts.
