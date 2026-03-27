@@ -95,5 +95,19 @@ pattern instead?
 I don't think singleton pattern would work for this case. Singleton ensures that a class has just a single instance that can be used globally. It doesn't necessarily ensure a thread-safe program. In fact, this pattern requires a special treatment in a multithreaded environment so that multiple threads won’t create a singleton object several times.
 
 #### Reflection Publisher-2
+1. 
+In the Model-View Controller (MVC) compound pattern, there is no “Service” and “Repository”. 
+Model in MVC covers both data storage and business logic. Explain based on your 
+understanding of design principles, why we need to separate “Service” and “Repository” from 
+a Model? 
+I prefer to keep the Model as a plain data holder while the Service owns the business rules and the Repository owns persistence. Splitting them like this keeps each layer with a single reason to change, makes it easier to mock dependencies in tests, and also protects us from leaking database details into the business logic (or vice versa). In other words, Services can evolve alongside use-cases, Repositories can evolve alongside storage changes, and Models stay lean.
+2. What happens if we only use the Model? Explain your imagination on how the interactions 
+between each model (Program, Subscriber, Notification) affect the code complexity for 
+each model? 
+If we stuff everything into the models, `Program`, `Subscriber`, and `Notification` all start knowing too much about each other. Program would need to handle subscription bookkeeping, firing HTTP calls, and maybe even storing data, while Subscriber ends up doing validation and Program-specific flows. The tangled interaction means every change (say, new notification type) forces edits across multiple models, increases chance of circular dependencies (couplers! which we studied in previous module), and makes unit testing painful because there's no seam to mock behavior.
+3. Have you explored more about Postman? Tell us how this tool helps you to test your current 
+work. You might want to also list which features in Postman you are interested in or feel like it 
+is helpful to help your Group Project or any of your future software engineering projects.
+Postman is very helpful. I keep the BambangShop collection with environment vars for base URLs so I can switch between local and deployed instances quickly, then use the Collection Runner to replay the subscribe/publish/unsubscribe flow after each change. I’m also starting to rely on the built-in test scripts to assert status codes and response bodies automatically, which feels handy for any future group project regression suite.
 
 #### Reflection Publisher-3
